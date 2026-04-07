@@ -3,7 +3,7 @@
 Chromium extension + **optional Windows native host**: save a list of **files, folders, and URLs**, then **open all** or **close session** from a floating, draggable, resizable panel.
 
 - **Repo:** [github.com/mapicallo/open-my-files-apps](https://github.com/mapicallo/open-my-files-apps)
-- **Suggested local folder:** `C:\code\open-my-files-apps\` (this tree can be copied or cloned there)
+- **Workspace local:** clona o trabaja en `C:\code\open-my-files-apps\` (junto al resto de extensiones en `C:\code\`).
 
 ## Pieces
 
