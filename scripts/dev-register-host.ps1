@@ -1,11 +1,13 @@
-# Registers the Native Messaging host for Chrome and Edge (current user).
+# Registers the Native Messaging host for Chromium browsers on Windows (current user).
+# Covers Chrome / Edge stable + Beta / Dev / Canary (SxS) and Brave.
+#
 # Usage:
 #   .\dev-register-host.ps1 -ExtensionId "abcdefghijklmnopqrstuvwxyz123456"
 # Optional:
 #   -HostExe "C:\full\path\OpenMyFilesApps.Host.exe"
 #
 # Build the host first:
-#   dotnet publish ..\native-host\OpenMyFilesApps.Host\OpenMyFilesApps.Host.csproj -c Release -r win-x64 --self-contained false
+#   dotnet build ..\native-host\OpenMyFilesApps.Host\OpenMyFilesApps.Host.csproj -c Release
 
 param(
     [Parameter(Mandatory = $true)]
@@ -57,16 +59,29 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 [System.IO.File]::WriteAllText($ManifestPath, $json, $utf8NoBom)
 
 $nmh = "com.mapicallo.open_my_files_apps"
-$chromeKey = "HKCU:\Software\Google\Chrome\NativeMessagingHosts\$nmh"
-$edgeKey = "HKCU:\Software\Microsoft\Edge\NativeMessagingHosts\$nmh"
 
-New-Item -Path $chromeKey -Force | Out-Null
-Set-ItemProperty -Path $chromeKey -Name "(default)" -Value $ManifestPath
+# Una clave por “familia” de Chromium; si solo registras Edge estable y usas Edge Dev,
+# aparece: "Specified native messaging host not found".
+$nativeMessagingParentKeys = @(
+    "HKCU:\Software\Google\Chrome\NativeMessagingHosts",
+    "HKCU:\Software\Google\Chrome Beta\NativeMessagingHosts",
+    "HKCU:\Software\Google\Chrome Dev\NativeMessagingHosts",
+    "HKCU:\Software\Google\Chrome SxS\NativeMessagingHosts",
+    "HKCU:\Software\Microsoft\Edge\NativeMessagingHosts",
+    "HKCU:\Software\Microsoft\Edge Beta\NativeMessagingHosts",
+    "HKCU:\Software\Microsoft\Edge Dev\NativeMessagingHosts",
+    "HKCU:\Software\Microsoft\Edge SxS\NativeMessagingHosts",
+    "HKCU:\Software\BraveSoftware\Brave-Browser\NativeMessagingHosts"
+)
 
-New-Item -Path $edgeKey -Force | Out-Null
-Set-ItemProperty -Path $edgeKey -Name "(default)" -Value $ManifestPath
+foreach ($parent in $nativeMessagingParentKeys) {
+    $fullKey = Join-Path $parent $nmh
+    New-Item -Path $fullKey -Force | Out-Null
+    Set-ItemProperty -LiteralPath $fullKey -Name "(default)" -Value $ManifestPath -Type String
+}
 
-Write-Host "Registered Native Messaging host."
+Write-Host "Registered Native Messaging host in $($nativeMessagingParentKeys.Count) browser hives."
 Write-Host "Manifest: $ManifestPath"
 Write-Host "Host exe: $HostExe"
 Write-Host "Extension ID: $ExtensionId"
+Write-Host "Cierra por completo el navegador y vuelve a abrirlo (Chrome/Edge/Brave)."

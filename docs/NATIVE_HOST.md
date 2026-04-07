@@ -39,7 +39,8 @@ If your `OpenMyFilesApps.Host.exe` is not in the default build output, pass `-Ho
 - **Detail under the banner:** the extension now shows Chrome’s error text (e.g. “Specified native messaging host not found” = registry/manifest path wrong; “Forbidden” / access = **wrong extension ID** in the manifest).
 - Confirm the **ID** on `chrome://extensions` (Developer mode) is exactly what you passed to `-ExtensionId` — **32 characters**, no `chrome-extension://` prefix.
 - Confirm the file exists: `%LOCALAPPDATA%\OpenMyFilesApps\com.mapicallo.open_my_files_apps.json` and that `"path"` points to a real `OpenMyFilesApps.Host.exe`.
-- **Edge:** the script registers `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\...`. If you only use Chrome, the Chrome key must exist too (the script adds both).
+- **Edge / Chrome channel:** Stable, Beta, Dev and Canary (SxS) use **different registry roots**. The current `dev-register-host.ps1` registers the same manifest under Chrome, Edge, and Brave families so “**Specified native messaging host not found**” goes away if you were only registered on stable but use **Edge Dev** or **Chrome Canary**, etc.
+- After registering, run **`scripts\verify-native-host.ps1`** in PowerShell to confirm the manifest path, that `OpenMyFilesApps.Host.exe` exists, and which browser hives point at your JSON.
 - Install **[.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)** (Desktop) if `OpenMyFilesApps.Host.exe` fails to start when run manually.
 
 ## Manifest file
