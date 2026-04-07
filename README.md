@@ -24,10 +24,19 @@ Chromium extension + **optional Windows native host**: save a list of **files, f
 
 3. **Register native messaging** (replace ID with yours from `chrome://extensions` or `edge://extensions`):
 
+   **PowerShell** (`cd` a `scripts`):
+
    ```powershell
-   cd scripts
    .\dev-register-host.ps1 -ExtensionId "your_extension_id_here"
    .\verify-native-host.ps1
+   ```
+
+   **Símbolo del sistema (cmd):** no ejecutes `.ps1` con `.\`; usa por ejemplo:
+
+   ```cmd
+   cd C:\code\open-my-files-apps\scripts
+   dev-register-host.cmd your_extension_id_here
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\verify-native-host.ps1
    ```
 
 4. **Quit the browser fully** and reopen. If you see *Specified native messaging host not found*, you may be on **Edge/Chrome Beta, Dev or Canary** — the script registers all common channels; re-run it after `git pull`, then `verify-native-host.ps1` again.
