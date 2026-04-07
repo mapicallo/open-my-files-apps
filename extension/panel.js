@@ -1,7 +1,7 @@
 const NATIVE_HOST = 'com.mapicallo.open_my_files_apps';
 const STORAGE_KEY = 'omfaItems';
 const LANG_KEY = 'omfaLang';
-const DOCS_URL = 'https://github.com/mapicallo/open-my-files-apps#native-host-windows-helper';
+const DOCS_URL = 'https://github.com/mapicallo/open-my-files-apps/blob/main/docs/NATIVE_HOST.md';
 
 const TRANSLATIONS = {
   en: {
