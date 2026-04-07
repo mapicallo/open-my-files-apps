@@ -1,0 +1,9 @@
+{
+  "name": "com.mapicallo.open_my_files_apps",
+  "description": "Native host for Open my files & apps",
+  "path": "ABSOLUTE_PATH_TO_OpenMyFilesApps.Host.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://REPLACE_WITH_EXTENSION_ID/"
+  ]
+}

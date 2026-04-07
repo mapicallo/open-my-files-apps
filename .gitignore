@@ -1,0 +1,9 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.zip
+extension.crx
+*.pem
+local-*.json
