@@ -6,6 +6,14 @@ The browser cannot show native file/folder dialogs or close desktop apps reliabl
 
 Requirements: **.NET 8 SDK** (Windows), **.NET 8 Desktop Runtime** on machines that only run the published `exe` if you use `SelfContained=false`).
 
+From repo, using **cmd** in `scripts/`:
+
+```cmd
+build-host.cmd
+```
+
+Or manually:
+
 ```bash
 cd native-host/OpenMyFilesApps.Host
 dotnet build -c Release

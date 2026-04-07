@@ -11,18 +11,28 @@ Chromium extension + **optional Windows native host**: save a list of **files, f
 |------|------|
 | `extension/` | MV3 UI (`panel.html`), `storage`, Native Messaging client |
 | `native-host/OpenMyFilesApps.Host/` | .NET 8 WinForms app: `ping`, file/folder pickers, `launch`, `closeSession` |
-| `scripts/dev-register-host.ps1` | Dev registration for Chrome + Edge (current user) |
+| `scripts/dev-register-host.ps1` | Dev registration for Chromium browsers (current user) |
+| `scripts/build-host.cmd` | Compila el `.exe` del host antes de registrar (usa **cmd** o doble clic) |
 
 ## Quick start (developers)
 
 1. **Extension:** Chrome/Edge → Extensions → Developer mode → Load unpacked → select `extension/`.
-2. **Host:** Install [.NET 8 SDK](https://dotnet.microsoft.com/download), then:
+2. **Host (.exe):** Instala **[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)** (incluye `dotnet` en el PATH; cierra y abre **cmd** después de instalar). Luego **compila** antes de registrar:
+
+   ```cmd
+   cd C:\code\open-my-files-apps\scripts
+   build-host.cmd
+   ```
+
+   O desde la raíz del repo:
 
    ```bash
    dotnet build native-host/OpenMyFilesApps.Host/OpenMyFilesApps.Host.csproj -c Release
    ```
 
-3. **Register native messaging** (replace ID with yours from `chrome://extensions` or `edge://extensions`):
+   Si `dotnet` “no se reconoce”, el SDK no está instalado o PATH no está actualizado.
+
+3. **Register native messaging** (ID de **32 caracteres** copiado de `chrome://extensions` / `edge://extensions`):
 
    **PowerShell** (`cd` a `scripts`):
 
