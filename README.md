@@ -22,14 +22,15 @@ Chromium extension + **optional Windows native host**: save a list of **files, f
    dotnet build native-host/OpenMyFilesApps.Host/OpenMyFilesApps.Host.csproj -c Release
    ```
 
-3. **Register native messaging** (replace ID with yours from `chrome://extensions`):
+3. **Register native messaging** (replace ID with yours from `chrome://extensions` or `edge://extensions`):
 
    ```powershell
    cd scripts
    .\dev-register-host.ps1 -ExtensionId "your_extension_id_here"
+   .\verify-native-host.ps1
    ```
 
-4. Reload the extension and open the toolbar icon — yellow banner should disappear when `ping` succeeds.
+4. **Quit the browser fully** and reopen. If you see *Specified native messaging host not found*, you may be on **Edge/Chrome Beta, Dev or Canary** — the script registers all common channels; re-run it after `git pull`, then `verify-native-host.ps1` again.
 
 Package ZIP for store submission:
 
