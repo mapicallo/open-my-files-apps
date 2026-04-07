@@ -21,6 +21,7 @@ const TRANSLATIONS = {
     hostMissingBody:
       'Install and register the native host, then reload this panel. See the repository instructions.',
     hostMissingLink: 'Setup guide',
+    hostErrorDetail: 'Technical detail',
     kindFile: 'file',
     kindFolder: 'folder',
     kindUrl: 'url',
@@ -52,6 +53,7 @@ const TRANSLATIONS = {
     hostMissingTitle: 'No se detecta el asistente de Windows',
     hostMissingBody: 'Instala y registra el host nativo y recarga este panel. Ver instrucciones en el repositorio.',
     hostMissingLink: 'Guía de instalación',
+    hostErrorDetail: 'Detalle técnico',
     kindFile: 'archivo',
     kindFolder: 'carpeta',
     kindUrl: 'url',
@@ -107,8 +109,17 @@ function nativeSend(message) {
   });
 }
 
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 async function checkHost() {
   const banner = document.getElementById('hostBanner');
+  let detail = '';
   try {
     const res = await nativeSend({ op: 'ping' });
     hostAvailable = res && res.ok === true;
@@ -116,18 +127,23 @@ async function checkHost() {
       banner.classList.add('host-banner--hidden');
       banner.innerHTML = '';
     }
-  } catch {
+  } catch (e) {
     hostAvailable = false;
+    detail = e && e.message ? e.message : String(e);
   }
 
   if (!hostAvailable) {
     banner.classList.remove('host-banner--hidden');
+    const detailBlock = detail
+      ? `<p class="host-banner-detail"><span class="host-banner-detail-label">${t('hostErrorDetail')}:</span> <code>${escapeHtml(detail)}</code></p>`
+      : '';
     banner.innerHTML = `
       <strong>${t('hostMissingTitle')}</strong>
       ${t('hostMissingBody')}
       <div style="margin-top:8px;">
         <a href="${DOCS_URL}" target="_blank" rel="noopener noreferrer">${t('hostMissingLink')}</a>
       </div>
+      ${detailBlock}
     `;
   }
 }

@@ -22,7 +22,16 @@ if (-not $HostExe) {
 }
 
 if (-not (Test-Path -LiteralPath $HostExe)) {
-    Write-Error "Host executable not found: $HostExe`nBuild with: dotnet publish native-host\OpenMyFilesApps.Host\OpenMyFilesApps.Host.csproj -c Release"
+    Write-Error @"
+Host executable not found: $HostExe
+
+From repo root, build the host:
+  dotnet build native-host\OpenMyFilesApps.Host\OpenMyFilesApps.Host.csproj -c Release
+
+Or publish:
+  dotnet publish native-host\OpenMyFilesApps.Host\OpenMyFilesApps.Host.csproj -c Release -r win-x64 --self-contained false
+Then pass -HostExe with the full path to OpenMyFilesApps.Host.exe
+"@
 }
 
 $ManifestDir = Join-Path $env:LOCALAPPDATA "OpenMyFilesApps"
@@ -43,7 +52,9 @@ $json = @"
 }
 "@
 
-Set-Content -LiteralPath $ManifestPath -Value $json -Encoding UTF8
+# UTF-8 sin BOM: Chrome/Edge a veces fallan si el JSON empieza por EF BB FF
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($ManifestPath, $json, $utf8NoBom)
 
 $nmh = "com.mapicallo.open_my_files_apps"
 $chromeKey = "HKCU:\Software\Google\Chrome\NativeMessagingHosts\$nmh"

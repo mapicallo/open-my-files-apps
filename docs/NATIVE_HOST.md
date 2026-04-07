@@ -31,7 +31,16 @@ cd scripts
 
 If your `OpenMyFilesApps.Host.exe` is not in the default build output, pass `-HostExe` with a full path.
 
-3. Restart the browser (or at least reload the extension) and open the panel again.
+3. **Quit the browser completely** and open it again (not only “reload extension”). Native Messaging hosts are read at startup.
+4. **Re-run** `dev-register-host.ps1` whenever your **unpacked extension ID changes** (another folder or new load) — the ID must match `allowed_origins` in the JSON manifest.
+
+### If the panel still shows “Windows helper not detected”
+
+- **Detail under the banner:** the extension now shows Chrome’s error text (e.g. “Specified native messaging host not found” = registry/manifest path wrong; “Forbidden” / access = **wrong extension ID** in the manifest).
+- Confirm the **ID** on `chrome://extensions` (Developer mode) is exactly what you passed to `-ExtensionId` — **32 characters**, no `chrome-extension://` prefix.
+- Confirm the file exists: `%LOCALAPPDATA%\OpenMyFilesApps\com.mapicallo.open_my_files_apps.json` and that `"path"` points to a real `OpenMyFilesApps.Host.exe`.
+- **Edge:** the script registers `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\...`. If you only use Chrome, the Chrome key must exist too (the script adds both).
+- Install **[.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)** (Desktop) if `OpenMyFilesApps.Host.exe` fails to start when run manually.
 
 ## Manifest file
 
