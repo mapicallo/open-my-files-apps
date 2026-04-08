@@ -35,8 +35,7 @@ const TRANSLATIONS = {
     promptLabel: 'Display name (optional)',
     errorsOpen: 'Some items failed to open',
     cancelled: 'Cancelled',
-    versionPrefix: 'Version',
-    close: 'Close'
+    versionPrefix: 'Version'
   },
   es: {
     title: 'Open my files & apps',
@@ -68,8 +67,7 @@ const TRANSLATIONS = {
     promptLabel: 'Nombre visible (opcional)',
     errorsOpen: 'Algunos elementos no se pudieron abrir',
     cancelled: 'Cancelado',
-    versionPrefix: 'Versión',
-    close: 'Cerrar'
+    versionPrefix: 'Versión'
   }
 };
 
@@ -87,11 +85,6 @@ function applyI18n() {
     if (key && TRANSLATIONS[currentLang][key]) el.textContent = TRANSLATIONS[currentLang][key];
   });
   document.documentElement.lang = currentLang === 'es' ? 'es' : 'en';
-  const closeBtn = document.getElementById('btnClose');
-  if (closeBtn) {
-    closeBtn.setAttribute('aria-label', t('close'));
-    closeBtn.setAttribute('title', t('close'));
-  }
 }
 
 function nativeSend(message) {
@@ -385,7 +378,6 @@ function initVersion() {
   el.textContent = `${t('versionPrefix')} ${manifest.version}`;
 }
 
-document.getElementById('btnClose').addEventListener('click', () => window.close());
 document.getElementById('btnPickFile').addEventListener('click', () => onPickFile());
 document.getElementById('btnPickFolder').addEventListener('click', () => onPickFolder());
 document.getElementById('btnAddUrl').addEventListener('click', () => onAddUrl());

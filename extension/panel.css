@@ -103,27 +103,6 @@ body {
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
 
-.btn-icon-close {
-  margin-top: 2px;
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: #6b7280;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-icon-close:hover {
-  background: rgba(0, 0, 0, 0.06);
-  color: #111827;
-}
-
 .host-banner {
   margin: 0 14px;
   margin-top: 10px;
