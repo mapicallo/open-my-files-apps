@@ -194,6 +194,11 @@ body {
   gap: 8px;
 }
 
+.session-actions .btn-open-all {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
 .btn {
   padding: 10px 14px;
   border-radius: 10px;
@@ -227,16 +232,6 @@ body {
 .btn-secondary:hover {
   border-color: #6366f1;
   color: #4f46e5;
-}
-
-.btn-outline {
-  background: #fff;
-  color: #b45309;
-  border: 1px solid #fbbf24;
-}
-
-.btn-outline:hover {
-  background: #fffbeb;
 }
 
 .empty-state {

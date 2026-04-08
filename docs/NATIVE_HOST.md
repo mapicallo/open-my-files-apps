@@ -1,6 +1,6 @@
 # Native host (Windows)
 
-The browser cannot show native file/folder dialogs or close desktop apps reliably. This extension uses **Native Messaging** to talk to `OpenMyFilesApps.Host.exe`.
+The browser cannot show native file/folder dialogs. This extension uses **Native Messaging** to talk to `OpenMyFilesApps.Host.exe`, which shows pick dialogs and launches the user’s saved list. **Closing** what you opened is left to the user in Windows.
 
 ## Build
 
@@ -62,6 +62,5 @@ Chrome and Edge read a registry key that points to a JSON file. The file format 
 
 ## Limitations (MVP)
 
-- `Process.Start` with `UseShellExecute` may return `null`; those processes are not tracked for **Close session**.
-- Some apps (e.g. extra `explorer.exe` windows) do not map 1:1 to a single `Process` handle; closing behavior may vary.
-- **Close session** tries `CloseMainWindow`, waits, then `Kill` the process tree — use with care if unsaved work appears.
+- The extension does **not** bulk-close apps you launched; close windows manually as needed.
+- `Process.Start` behavior depends on Windows and the file/URL type.

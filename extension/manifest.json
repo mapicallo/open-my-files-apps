@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Open my files & apps",
-  "version": "0.1.0",
-  "description": "One-click open for your files & apps. Build a session list and launch or close it from a floating panel (Windows helper required).",
+  "version": "0.1.1",
+  "description": "Open files, folders & URLs from one panel. Windows helper: native pickers + launch. List stored locally.",
   "permissions": ["storage", "nativeMessaging", "windows"],
   "action": {
     "default_title": "Open my files & apps",

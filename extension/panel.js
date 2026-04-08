@@ -12,9 +12,8 @@ const TRANSLATIONS = {
     addFolder: 'Add folder',
     addUrl: 'Add URL',
     openAll: 'Open all',
-    closeSession: 'Close session',
     emptyHint:
-      'Add files, folders, or URLs. The Windows helper is required for file/folder picks and for closing launched apps.',
+      'Add files, folders, or URLs. The Windows helper is required for file and folder picks.',
     footerNote: 'Drag the top bar to move. Resize this window like any app. Data stays on this device.',
     brand: 'AI4Context',
     hostMissingTitle: 'Windows helper not detected',
@@ -32,7 +31,6 @@ const TRANSLATIONS = {
     promptUrl: 'URL (https://…)',
     promptLabel: 'Display name (optional)',
     errorsOpen: 'Some items failed to open',
-    errorsClose: 'Close session finished with issues',
     cancelled: 'Cancelled',
     versionPrefix: 'Version',
     close: 'Close'
@@ -45,9 +43,8 @@ const TRANSLATIONS = {
     addFolder: 'Añadir carpeta',
     addUrl: 'Añadir URL',
     openAll: 'Abrir todo',
-    closeSession: 'Cerrar sesión',
     emptyHint:
-      'Añade archivos, carpetas o URLs. El asistente de Windows es necesario para elegir archivos/carpetas y para cerrar lo lanzado.',
+      'Añade archivos, carpetas o URLs. El asistente de Windows es necesario para elegir archivos y carpetas.',
     footerNote: 'Arrastra la barra superior para mover. Redimensiona como cualquier ventana. Los datos quedan en este dispositivo.',
     brand: 'AI4Context',
     hostMissingTitle: 'No se detecta el asistente de Windows',
@@ -64,7 +61,6 @@ const TRANSLATIONS = {
     promptUrl: 'URL (https://…)',
     promptLabel: 'Nombre visible (opcional)',
     errorsOpen: 'Algunos elementos no se pudieron abrir',
-    errorsClose: 'Cerrar sesión terminó con avisos',
     cancelled: 'Cancelado',
     versionPrefix: 'Versión',
     close: 'Cerrar'
@@ -321,22 +317,6 @@ async function onOpenAll() {
   }
 }
 
-async function onCloseSession() {
-  if (!hostAvailable) {
-    await checkHost();
-    if (!hostAvailable) return;
-  }
-  try {
-    const res = await nativeSend({ op: 'closeSession' });
-    if (res.errors && res.errors.length) {
-      window.alert(`${t('errorsClose')}:\n${res.errors.join('\n')}`);
-    }
-  } catch (e) {
-    console.warn(e);
-    await checkHost();
-  }
-}
-
 async function onLangChange(lang) {
   currentLang = lang === 'es' ? 'es' : 'en';
   await chrome.storage.local.set({ [LANG_KEY]: currentLang });
@@ -357,7 +337,6 @@ document.getElementById('btnPickFile').addEventListener('click', () => onPickFil
 document.getElementById('btnPickFolder').addEventListener('click', () => onPickFolder());
 document.getElementById('btnAddUrl').addEventListener('click', () => onAddUrl());
 document.getElementById('btnOpenAll').addEventListener('click', () => onOpenAll());
-document.getElementById('btnCloseSession').addEventListener('click', () => onCloseSession());
 document.getElementById('languageSelect').addEventListener('change', (e) => onLangChange(e.target.value));
 
 (async function init() {

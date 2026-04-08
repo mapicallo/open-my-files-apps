@@ -1,6 +1,6 @@
 # Open my files & apps
 
-Chromium extension + **optional Windows native host**: save a list of **files, folders, and URLs**, then **open all** or **close session** from a floating, draggable, resizable panel.
+Chromium extension + **optional Windows native host**: save a list of **files, folders, and URLs**, then **open all** from a floating, draggable, resizable panel. You close opened apps yourself in Windows.
 
 - **Repo:** [github.com/mapicallo/open-my-files-apps](https://github.com/mapicallo/open-my-files-apps)
 - **Workspace local:** clona o trabaja en `C:\code\open-my-files-apps\` (junto al resto de extensiones en `C:\code\`).
@@ -10,7 +10,7 @@ Chromium extension + **optional Windows native host**: save a list of **files, f
 | Part | Role |
 |------|------|
 | `extension/` | MV3 UI (`panel.html`), `storage`, Native Messaging client |
-| `native-host/OpenMyFilesApps.Host/` | .NET 8 WinForms app: `ping`, file/folder pickers, `launch`, `closeSession` |
+| `native-host/OpenMyFilesApps.Host/` | .NET 8 WinForms app: `ping`, file/folder pickers, `launch` |
 | `scripts/dev-register-host.ps1` | Dev registration for Chromium browsers (current user) |
 | `scripts/build-host.cmd` | Compila el `.exe` del host antes de registrar (usa **cmd** o doble clic) |
 

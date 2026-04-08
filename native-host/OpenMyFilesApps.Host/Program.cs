@@ -7,8 +7,7 @@ namespace OpenMyFilesApps.Host;
 
 internal static class Program
 {
-    private static readonly List<Process?> SessionProcesses = [];
-    private const string Version = "0.1.0";
+    private const string Version = "0.1.1";
 
     [STAThread]
     private static int Main()
@@ -77,7 +76,6 @@ internal static class Program
                 "pickFile" => PickFile(),
                 "pickFolder" => PickFolder(),
                 "launch" => Launch(root),
-                "closeSession" => CloseSession(),
                 _ => JsonSerializer.Serialize(new { ok = false, error = "unknown op" })
             };
         }
@@ -132,8 +130,6 @@ internal static class Program
         if (!root.TryGetProperty("items", out var itemsEl) || itemsEl.ValueKind != JsonValueKind.Array)
             return JsonSerializer.Serialize(new { ok = false, error = "items array required" });
 
-        PruneExitedProcesses();
-
         var errors = new List<string>();
         foreach (var el in itemsEl.EnumerateArray())
         {
@@ -158,9 +154,7 @@ internal static class Program
                         psi.WorkingDirectory = dir;
                 }
 
-                var p = Process.Start(psi);
-                if (p != null)
-                    SessionProcesses.Add(p);
+                Process.Start(psi);
             }
             catch (Exception ex)
             {
@@ -168,58 +162,6 @@ internal static class Program
             }
         }
 
-        return JsonSerializer.Serialize(new { ok = true, errors });
-    }
-
-    private static void PruneExitedProcesses()
-    {
-        SessionProcesses.RemoveAll(p =>
-        {
-            if (p is null) return true;
-            try
-            {
-                return p.HasExited;
-            }
-            catch
-            {
-                return true;
-            }
-        });
-    }
-
-    private static string CloseSession()
-    {
-        var errors = new List<string>();
-        for (var i = SessionProcesses.Count - 1; i >= 0; i--)
-        {
-            var p = SessionProcesses[i];
-            if (p is null)
-                continue;
-            try
-            {
-                if (!p.HasExited)
-                {
-                    p.CloseMainWindow();
-                    if (!p.WaitForExit(4000))
-                    {
-                        try
-                        {
-                            p.Kill(true);
-                        }
-                        catch (Exception ex)
-                        {
-                            errors.Add($"kill: {ex.Message}");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.Add(ex.Message);
-            }
-        }
-
-        SessionProcesses.Clear();
         return JsonSerializer.Serialize(new { ok = true, errors });
     }
 }
