@@ -1,6 +1,6 @@
 # Open my files & apps
 
-Chromium extension + **optional Windows native host**: save a list of **files, folders, and URLs**, then **open all** from a floating, draggable, resizable panel. You close opened apps yourself in Windows.
+Chromium extension + **optional Windows native host**: save a list of **files, folders, and URLs** with per-row checkboxes; **Open all** launches every entry; **Open selection** launches only checked rows. Floating, draggable, resizable panel. You close opened apps yourself in Windows.
 
 - **Repo:** [github.com/mapicallo/open-my-files-apps](https://github.com/mapicallo/open-my-files-apps)
 - **Workspace local:** clona o trabaja en `C:\code\open-my-files-apps\` (junto al resto de extensiones en `C:\code\`).

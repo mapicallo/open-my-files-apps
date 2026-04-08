@@ -36,11 +36,12 @@
       </section>
 
       <section class="session-actions">
-        <button type="button" id="btnOpenAll" class="btn btn-primary btn-open-all" data-i18n="openAll">Open all</button>
+        <button type="button" id="btnOpenAll" class="btn btn-primary btn-session" data-i18n="openAll">Open all</button>
+        <button type="button" id="btnOpenSelection" class="btn btn-secondary btn-session" data-i18n="openSelection">Open selection</button>
       </section>
 
       <div id="emptyState" class="empty-state">
-        <p data-i18n="emptyHint">Add files, folders, or URLs. The Windows helper is required for file and folder picks.</p>
+        <p data-i18n="emptyHint">Add files, folders, or URLs. Check rows to include them in Open selection; Open all ignores checks. Windows helper required for file and folder picks.</p>
       </div>
 
       <ul id="itemList" class="item-list" aria-label="Session items"></ul>

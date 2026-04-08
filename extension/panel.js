@@ -12,8 +12,11 @@ const TRANSLATIONS = {
     addFolder: 'Add folder',
     addUrl: 'Add URL',
     openAll: 'Open all',
+    openSelection: 'Open selection',
+    includeInLaunch: 'Include in Open selection',
+    nothingSelected: 'Check at least one item to use Open selection.',
     emptyHint:
-      'Add files, folders, or URLs. The Windows helper is required for file and folder picks.',
+      'Add files, folders, or URLs. Check rows to include them in Open selection; Open all runs every row. Windows helper required for file and folder picks.',
     footerNote: 'Drag the top bar to move. Resize this window like any app. Data stays on this device.',
     brand: 'AI4Context',
     hostMissingTitle: 'Windows helper not detected',
@@ -43,8 +46,11 @@ const TRANSLATIONS = {
     addFolder: 'Añadir carpeta',
     addUrl: 'Añadir URL',
     openAll: 'Abrir todo',
+    openSelection: 'Abrir selección',
+    includeInLaunch: 'Incluir en Abrir selección',
+    nothingSelected: 'Marca al menos un elemento para usar Abrir selección.',
     emptyHint:
-      'Añade archivos, carpetas o URLs. El asistente de Windows es necesario para elegir archivos y carpetas.',
+      'Añade archivos, carpetas o URLs. Marca filas para incluirlas en Abrir selección; Abrir todo ejecuta todas las filas. El asistente de Windows es necesario para archivos y carpetas.',
     footerNote: 'Arrastra la barra superior para mover. Redimensiona como cualquier ventana. Los datos quedan en este dispositivo.',
     brand: 'AI4Context',
     hostMissingTitle: 'No se detecta el asistente de Windows',
@@ -144,12 +150,26 @@ async function checkHost() {
   }
 }
 
+function normalizeStoredItems() {
+  let changed = false;
+  for (const item of items) {
+    if (item.checked === undefined) {
+      item.checked = true;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 async function loadState() {
   const data = await chrome.storage.local.get([STORAGE_KEY, LANG_KEY]);
   if (Array.isArray(data[STORAGE_KEY])) items = data[STORAGE_KEY];
   if (data[LANG_KEY] === 'es' || data[LANG_KEY] === 'en') {
     currentLang = data[LANG_KEY];
     document.getElementById('languageSelect').value = currentLang;
+  }
+  if (normalizeStoredItems()) {
+    await saveState();
   }
 }
 
@@ -173,7 +193,11 @@ function renderList() {
     li.className = 'item-row';
     const kindLabel =
       item.kind === 'folder' ? t('kindFolder') : item.kind === 'url' ? t('kindUrl') : t('kindFile');
+    const checked = item.checked !== false;
     li.innerHTML = `
+      <label class="item-check">
+        <input type="checkbox" class="item-include" ${checked ? 'checked' : ''} aria-label="${escapeHtml(t('includeInLaunch'))}" title="${escapeHtml(t('includeInLaunch'))}" />
+      </label>
       <span class="item-kind">${kindLabel}</span>
       <div class="item-body">
         <div class="item-label"></div>
@@ -190,6 +214,12 @@ function renderList() {
     `;
     li.querySelector('.item-label').textContent = item.label || item.target;
     li.querySelector('.item-target').textContent = item.target;
+
+    const cb = li.querySelector('.item-include');
+    cb.addEventListener('change', () => {
+      items[index].checked = cb.checked;
+      saveState();
+    });
 
     li.querySelector('.btn-move-up').addEventListener('click', () => moveItem(index, -1));
     li.querySelector('.btn-move-down').addEventListener('click', () => moveItem(index, 1));
@@ -234,7 +264,8 @@ function addItem(kind, target, label) {
     id: crypto.randomUUID(),
     kind,
     target: trimmedTarget,
-    label: (label && label.trim()) || suggestLabel(kind, trimmedTarget)
+    label: (label && label.trim()) || suggestLabel(kind, trimmedTarget),
+    checked: true
   });
   saveState();
   renderList();
@@ -251,6 +282,17 @@ function suggestLabel(kind, target) {
   }
   const base = target.split(/[/\\]/).filter(Boolean).pop();
   return base || target;
+}
+
+async function launchItems(entries) {
+  const payload = {
+    op: 'launch',
+    items: entries.map((i) => ({ kind: i.kind, target: i.target }))
+  };
+  const res = await nativeSend(payload);
+  if (res.errors && res.errors.length) {
+    window.alert(`${t('errorsOpen')}:\n${res.errors.join('\n')}`);
+  }
 }
 
 async function onPickFile() {
@@ -303,14 +345,25 @@ async function onOpenAll() {
   }
   if (!items.length) return;
   try {
-    const payload = {
-      op: 'launch',
-      items: items.map((i) => ({ kind: i.kind, target: i.target }))
-    };
-    const res = await nativeSend(payload);
-    if (res.errors && res.errors.length) {
-      window.alert(`${t('errorsOpen')}:\n${res.errors.join('\n')}`);
-    }
+    await launchItems(items);
+  } catch (e) {
+    console.warn(e);
+    await checkHost();
+  }
+}
+
+async function onOpenSelection() {
+  if (!hostAvailable) {
+    await checkHost();
+    if (!hostAvailable) return;
+  }
+  const selected = items.filter((i) => i.checked !== false);
+  if (!selected.length) {
+    window.alert(t('nothingSelected'));
+    return;
+  }
+  try {
+    await launchItems(selected);
   } catch (e) {
     console.warn(e);
     await checkHost();
@@ -337,6 +390,7 @@ document.getElementById('btnPickFile').addEventListener('click', () => onPickFil
 document.getElementById('btnPickFolder').addEventListener('click', () => onPickFolder());
 document.getElementById('btnAddUrl').addEventListener('click', () => onAddUrl());
 document.getElementById('btnOpenAll').addEventListener('click', () => onOpenAll());
+document.getElementById('btnOpenSelection').addEventListener('click', () => onOpenSelection());
 document.getElementById('languageSelect').addEventListener('change', (e) => onLangChange(e.target.value));
 
 (async function init() {

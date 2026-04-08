@@ -7,7 +7,7 @@ namespace OpenMyFilesApps.Host;
 
 internal static class Program
 {
-    private const string Version = "0.1.1";
+    private const string Version = "0.1.2";
 
     [STAThread]
     private static int Main()
