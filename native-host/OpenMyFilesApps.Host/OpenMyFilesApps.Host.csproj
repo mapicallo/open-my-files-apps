@@ -7,7 +7,7 @@
     <RootNamespace>OpenMyFilesApps.Host</RootNamespace>
     <AssemblyName>OpenMyFilesApps.Host</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyVersion>0.1.8</AssemblyVersion>
-    <InformationalVersion>0.1.8</InformationalVersion>
+    <AssemblyVersion>0.1.9</AssemblyVersion>
+    <InformationalVersion>0.1.9</InformationalVersion>
   </PropertyGroup>
 </Project>
