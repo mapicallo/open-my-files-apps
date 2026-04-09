@@ -44,6 +44,7 @@ See [NATIVE_HOST.md](NATIVE_HOST.md) and [USER-SETUP.md](USER-SETUP.md).
 
 ## Listing assets (non-technical checklist)
 
+- **Chrome Web Store — “Icono de Chrome Web Store” (required):** upload **`extension/icons/icon128.png`**. It is already **128×128** PNG, same artwork as the toolbar icon. [Image guidelines](https://developer.chrome.com/docs/webstore/images/).
 - **Screenshots:** prefer the UI **after** the Windows helper is set up (main panel with a few rows).
-- **128×128** and promotional images: use `extension/icons/icon128.png` or higher-res artwork derived from it.
+- **Promotional / marquee images:** follow the same Chrome doc if you add optional marketing tiles.
 - **Support / homepage:** `https://github.com/mapicallo/open-my-files-apps`
