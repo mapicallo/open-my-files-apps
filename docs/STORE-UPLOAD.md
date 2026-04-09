@@ -21,17 +21,45 @@ Use (same for Chrome and Edge partner centre):
 
 Ensure `main` contains `docs/PRIVACY.md` before you submit.
 
-## Permission justifications (short text you can paste)
+## Chrome — pestaña «Privacidad» (textos para pegar)
 
-| Permission        | Typical justification |
-|-------------------|------------------------|
-| `storage`         | Saves your list of files, folders, and URLs locally in the browser; no account or sync. |
-| `nativeMessaging` | Optional Windows helper for native file/folder pickers and opening paths; communication stays on the device. |
-| `windows`          | Opens and focuses the draggable panel window from the toolbar button. |
+Marca **«No»** en **¿Utilizas código remoto?** El paquete solo carga `panel.js` y `background.js` locales; no hay scripts externos ni `eval` de código descargado.
 
-## Single purpose (Chrome)
+### Español (si tu consola está en español)
 
-One clear purpose: **quickly open user-chosen files, folders, and URLs from a single floating panel**, with optional Windows integration for pickers.
+**Descripción de la finalidad única**
+
+> Esta extensión tiene un único propósito claro: permitir mantener una lista personal de archivos, carpetas y URLs y abrirla rápidamente desde una ventana flotante. No modifica páginas web, resultados de búsqueda ni contenido de terceros. En Windows, de forma opcional, se comunica con un programa local que el usuario instala aparte para mostrar selectores nativos del sistema y abrir rutas que el usuario haya elegido.
+
+**Justificación de storage**
+
+> Guarda únicamente los datos que el usuario crea en la propia extensión: nombres visibles, rutas de archivos y carpetas, URLs, orden de filas y el estado de las casillas de “abrir selección”. Usa chrome.storage.local para que la lista persista al cerrar el navegador. Esos datos no se envían a servidores del desarrollador; no hay backend ni analítica en el paquete.
+
+**Justificación de nativeMessaging**
+
+> Chromium no puede abrir por sí solo los cuadros de diálogo nativos de archivos o carpetas en Windows. Si el usuario instala el ejecutable local opcional (OpenMyFilesApps.Host.exe), la extensión intercambia mensajes JSON solo con ese proceso en el mismo equipo (comprobar conexión, elegir archivo/carpeta, abrir rutas). Esos mensajes no se reenvían a servidores externos.
+
+**Justificación de windows** *(si el formulario la pide)*
+
+> Al pulsar el icono de la barra de herramientas se abre o se enfoca una ventana tipo popup con la interfaz de la extensión, para poder moverla y redimensionarla. La API chrome.windows se usa únicamente para crear y reutilizar esa ventana, no para acceder a datos ajenos del navegador.
+
+### English (alternative for reviewers)
+
+**Single purpose**
+
+> This extension has one narrow purpose: let the user keep a personal list of files, folders, and web URLs and open them quickly from one draggable floating window. It does not modify webpages, search results, or third-party content. On Windows only, optional native messaging talks to a separate local program the user installs to show OS file/folder pickers and launch paths the user chose.
+
+**`storage`**
+
+> Stores only user-created data inside the extension: labels, file/folder paths, URLs, row order, and checkbox state for “open selection.” Uses chrome.storage.local so the list persists across browser restarts. This data is not transmitted to the developer’s servers; there is no backend or analytics in the package.
+
+**`nativeMessaging`**
+
+> Chromium cannot open native Windows file/folder dialogs by itself. If the user installs the optional local OpenMyFilesApps.Host.exe, the extension exchanges JSON messages only with that process on the same machine (ping, pick file/folder, launch paths). No messaging is sent to remote servers.
+
+**`windows`** *(if shown)*
+
+> The toolbar button opens or focuses a popup-style window for the panel UI so it can be moved and resized. chrome.windows is used only to create and reuse that window, not to access unrelated browser data.
 
 ## After publication — fixed extension ID
 
