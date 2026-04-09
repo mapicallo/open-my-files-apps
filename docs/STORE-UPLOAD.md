@@ -51,5 +51,9 @@ See [NATIVE_HOST.md](NATIVE_HOST.md) and [USER-SETUP.md](USER-SETUP.md).
   ```
   Outputs **`pantallazos/chrome-web-store/*.png`** — each image is scaled to fit, centered on white, exact **1280×800**, **RGB**.
 - **Screenshots (content):** prefer the UI **after** the Windows helper is set up for “happy path” shots; one optional shot can show first-time setup if you want transparency for users.
-- **Promotional / marquee images:** follow the same Chrome doc if you add optional marketing tiles.
+- **Promotional tiles (Chrome):** **Small** **440×280** and **marquee** **1400×560**, 24-bit PNG or JPEG, **no alpha**. Generate branded tiles from `extension/icons/icon128.png` — from repo root:
+  ```powershell
+  python .\pantallazos\prepare-chrome-promo-tiles.py
+  ```
+  Writes **`pantallazos/chrome-web-store/promo-small-440x280.png`** and **`promo-marquee-1400x560.png`** (same folder as screenshot exports).
 - **Support / homepage:** `https://github.com/mapicallo/open-my-files-apps`
