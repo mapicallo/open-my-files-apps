@@ -13,6 +13,23 @@ Contents: everything under `extension/` with **manifest.json at the ZIP root** (
 
 Use the **same ZIP** for Chrome and Edge unless a store asks for a specific naming convention.
 
+## Microsoft Edge — logo & small promo (Partner Center)
+
+Edge asks for:
+
+| Asset | Size |
+|--------|------|
+| **Logotipo de extensión** | **300×300** (square; min 128×128) |
+| **Icono promocional pequeño** | **440×280** |
+
+From repo root:
+
+```powershell
+python .\pantallazos\prepare-edge-store-assets.py
+```
+
+Writes **`pantallazos/edge-store/extension-logo-300x300.png`** and **`pantallazos/edge-store/promo-small-440x280.png`** (folder is gitignored; regenerate anytime).
+
 ## Privacy policy URL (dashboard)
 
 Use (same for Chrome and Edge partner centre):

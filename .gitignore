@@ -10,3 +10,4 @@ local-*.json
 
 # Generated Chrome Web Store screenshots (sources live in pantallazos/)
 pantallazos/chrome-web-store/
+pantallazos/edge-store/
