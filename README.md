@@ -61,11 +61,13 @@ Offline or advanced: see [docs/USER-SETUP.md](docs/USER-SETUP.md).
 
 4. **Quit the browser fully** and reopen. If you see *Specified native messaging host not found*, you may be on **Edge/Chrome Beta, Dev or Canary** — the script registers all common channels; re-run it after `git pull`, then `verify-native-host.ps1` again.
 
-Package ZIP for store submission:
+Store ZIP (Chrome / Edge — same file):
 
 ```powershell
 .\scripts\package-extension.ps1
 ```
+
+Writes **`dist/open-my-files-apps-<version>.zip`** (manifest at root). Checklist and privacy URL: [docs/STORE-UPLOAD.md](docs/STORE-UPLOAD.md).
 
 ## UX
 
@@ -76,6 +78,8 @@ Package ZIP for store submission:
 ## Docs
 
 - [User setup (simple)](docs/USER-SETUP.md)
+- [Store upload / privacy URL](docs/STORE-UPLOAD.md)
+- [Privacy policy](docs/PRIVACY.md)
 - [Native host details](docs/NATIVE_HOST.md)
 
 ## License
