@@ -45,6 +45,11 @@ See [NATIVE_HOST.md](NATIVE_HOST.md) and [USER-SETUP.md](USER-SETUP.md).
 ## Listing assets (non-technical checklist)
 
 - **Chrome Web Store — “Icono de Chrome Web Store” (required):** upload **`extension/icons/icon128.png`**. It is already **128×128** PNG, same artwork as the toolbar icon. [Image guidelines](https://developer.chrome.com/docs/webstore/images/).
-- **Screenshots:** prefer the UI **after** the Windows helper is set up (main panel with a few rows).
+- **Screenshots (Chrome):** **1280×800** or **640×400**, JPEG or **24-bit PNG**, **no alpha**. If your raw grabs are in `pantallazos/`, generate store-ready files with:
+  ```powershell
+  python .\pantallazos\prepare-chrome-store-screenshots.py
+  ```
+  Outputs **`pantallazos/chrome-web-store/*.png`** — each image is scaled to fit, centered on white, exact **1280×800**, **RGB**.
+- **Screenshots (content):** prefer the UI **after** the Windows helper is set up for “happy path” shots; one optional shot can show first-time setup if you want transparency for users.
 - **Promotional / marquee images:** follow the same Chrome doc if you add optional marketing tiles.
 - **Support / homepage:** `https://github.com/mapicallo/open-my-files-apps`
