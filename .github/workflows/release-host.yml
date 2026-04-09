@@ -1,0 +1,35 @@
+# Publishes OpenMyFilesApps.Host.exe to the GitHub Release that triggered the workflow.
+# The one-step installer in the extension downloads:
+#   .../releases/latest/download/OpenMyFilesApps.Host.exe
+
+name: Attach host binary to release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-host:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish host (win-x64, self-contained single file)
+        run: >
+          dotnet publish native-host/OpenMyFilesApps.Host/OpenMyFilesApps.Host.csproj
+          -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o "${{ github.workspace }}/out"
+
+      - name: Upload OpenMyFilesApps.Host.exe to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: out/OpenMyFilesApps.Host.exe

@@ -27,6 +27,14 @@ dotnet publish -c Release -r win-x64 --self-contained false
 
 The output executable path is used in the JSON manifest `path` field.
 
+## Release binary (for end users)
+
+The in-panel installer downloads:
+
+`https://github.com/mapicallo/open-my-files-apps/releases/latest/download/OpenMyFilesApps.Host.exe`
+
+CI (`.github/workflows/release-host.yml`) publishes that file as a **win-x64 self-contained single-file** build so users **do not** need the .NET runtime separately. The asset name must stay **`OpenMyFilesApps.Host.exe`** for the `latest/download/...` URL to work.
+
 ## Register (development)
 
 1. Load the extension **unpacked** from `extension/` and copy the **extension ID** from `chrome://extensions`.
@@ -41,6 +49,24 @@ If your `OpenMyFilesApps.Host.exe` is not in the default build output, pass `-Ho
 
 3. **Quit the browser completely** and open it again (not only “reload extension”). Native Messaging hosts are read at startup.
 4. **Re-run** `dev-register-host.ps1` whenever your **unpacked extension ID changes** (another folder or new load) — the ID must match `allowed_origins` in the JSON manifest.
+
+### Unregister (testing “first time” / yellow banner)
+
+From `scripts/`:
+
+```powershell
+.\dev-unregister-host.ps1
+```
+
+Optional: also delete the manifest JSON:
+
+```powershell
+.\dev-unregister-host.ps1 -RemoveManifest
+```
+
+Or from **cmd**: `dev-unregister-host.cmd` / `dev-unregister-host.cmd removemanifest`
+
+Then fully quit and reopen the browser so the panel shows the host-missing state again.
 
 ### If the panel still shows “Windows helper not detected”
 

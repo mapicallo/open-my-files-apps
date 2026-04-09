@@ -5,6 +5,16 @@ Chromium extension + **optional Windows native host**: save a list of **files, f
 - **Repo:** [github.com/mapicallo/open-my-files-apps](https://github.com/mapicallo/open-my-files-apps)
 - **Workspace local:** clona o trabaja en `C:\code\open-my-files-apps\` (junto al resto de extensiones en `C:\code\`).
 
+## Simple setup (users, no commands)
+
+If you only want to **use** the extension on Windows:
+
+1. Install the extension and open its panel.
+2. On the **yellow banner**, use **Download installer (double-click)**: save `OpenMyFilesApps-Install-Windows.cmd`, run it once (SmartScreen: *More info* → *Run anyway*). It downloads a **self-contained** `OpenMyFilesApps.Host.exe`, registers it, and embeds your extension ID. Then **fully quit and reopen** the browser.
+3. **Maintainers:** publishing a GitHub Release runs [`.github/workflows/release-host.yml`](.github/workflows/release-host.yml), which builds and attaches **`OpenMyFilesApps.Host.exe`** (self-contained single-file) for the panel’s download URL.
+
+Offline or advanced: see [docs/USER-SETUP.md](docs/USER-SETUP.md).
+
 ## Pieces
 
 | Part | Role |
@@ -65,6 +75,7 @@ Package ZIP for store submission:
 
 ## Docs
 
+- [User setup (simple)](docs/USER-SETUP.md)
 - [Native host details](docs/NATIVE_HOST.md)
 
 ## License

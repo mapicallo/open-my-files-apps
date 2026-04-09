@@ -121,8 +121,94 @@ body {
 
 .host-banner strong {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: #78350f;
+}
+
+.host-banner-lead {
+  margin: 0 0 8px;
+}
+
+.host-setup-steps {
+  margin: 0 0 10px;
+  padding-left: 1.25rem;
+}
+
+.host-setup-steps li {
+  margin-bottom: 4px;
+}
+
+.host-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.host-banner-actions--stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.host-banner-actions--stack .btn-setup-banner-secondary {
+  text-align: center;
+}
+
+.btn-setup-banner {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-setup-banner:hover {
+  background: #4338ca;
+}
+
+.btn-setup-banner-secondary {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #a5b4fc;
+  background: #fff;
+  color: #4338ca;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-setup-banner-secondary:hover {
+  background: #eef2ff;
+}
+
+button.btn-setup-banner-secondary {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-setup-banner--ghost {
+  background: #fffbeb;
+  border-color: #d97706;
+  color: #78350f;
+}
+
+.btn-setup-banner--ghost:hover {
+  background: #fef3c7;
+}
+
+.host-banner-runtime {
+  margin: 0 0 8px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.host-banner-dev-link {
+  font-size: 11px;
 }
 
 .host-banner a {

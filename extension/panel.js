@@ -2,6 +2,10 @@ const NATIVE_HOST = 'com.mapicallo.open_my_files_apps';
 const STORAGE_KEY = 'omfaItems';
 const LANG_KEY = 'omfaLang';
 const DOCS_URL = 'https://github.com/mapicallo/open-my-files-apps/blob/main/docs/NATIVE_HOST.md';
+const RELEASES_URL = 'https://github.com/mapicallo/open-my-files-apps/releases/latest';
+/** Must match the asset name attached to GitHub Releases (see .github/workflows/release-host.yml). */
+const HOST_EXE_DOWNLOAD_URL =
+  'https://github.com/mapicallo/open-my-files-apps/releases/latest/download/OpenMyFilesApps.Host.exe';
 
 const TRANSLATIONS = {
   en: {
@@ -20,9 +24,19 @@ const TRANSLATIONS = {
     footerNote: 'Drag the top bar to move. Resize this window like any app. Data stays on this device.',
     brand: 'AI4Context',
     hostMissingTitle: 'Windows helper not detected',
-    hostMissingBody:
-      'Install and register the native host, then reload this panel. See the repository instructions.',
-    hostMissingLink: 'Setup guide',
+    hostMissingLead:
+      'Connect the small Windows program once. No extension ID to copy — the installer already matches this browser.',
+    setupStepEasy1: 'Click the purple button and save the file (Downloads is fine).',
+    setupStepEasy2:
+      'Double-click the downloaded .cmd. If Windows shows SmartScreen, use “More info” → “Run anyway”.',
+    setupStepEasy3: 'Close every browser window, reopen Chrome / Edge / Brave, and open this panel again.',
+    setupDownloadCmdBtn: 'Download installer (double-click)',
+    setupDownloadPs1Btn: 'PowerShell script instead (.ps1)',
+    setupDownloadManualBtn: 'Already have the .exe? Register only',
+    setupHostExeLink: 'Host .exe only (advanced)',
+    setupSelfContainedNote:
+      'The helper from GitHub is self-contained — you do not need to install .NET separately.',
+    hostMissingLink: 'Technical details (developers)',
     hostErrorDetail: 'Technical detail',
     kindFile: 'file',
     kindFolder: 'folder',
@@ -53,8 +67,19 @@ const TRANSLATIONS = {
     footerNote: 'Arrastra la barra superior para mover. Redimensiona como cualquier ventana. Los datos quedan en este dispositivo.',
     brand: 'AI4Context',
     hostMissingTitle: 'No se detecta el asistente de Windows',
-    hostMissingBody: 'Instala y registra el host nativo y recarga este panel. Ver instrucciones en el repositorio.',
-    hostMissingLink: 'Guía de instalación',
+    hostMissingLead:
+      'Conecta el programa de Windows una vez. No hace falta copiar el ID: el instalador ya corresponde a este navegador.',
+    setupStepEasy1: 'Pulsa el botón morado y guarda el archivo (por ejemplo en Descargas).',
+    setupStepEasy2:
+      'Doble clic al .cmd descargado. Si sale SmartScreen, “Más información” → “Ejecutar de todas formas”.',
+    setupStepEasy3: 'Cierra todas las ventanas del navegador, ábrelo de nuevo y vuelve a este panel.',
+    setupDownloadCmdBtn: 'Descargar instalador (doble clic)',
+    setupDownloadPs1Btn: 'Alternativa: script PowerShell (.ps1)',
+    setupDownloadManualBtn: 'Ya tengo el .exe — solo registrar',
+    setupHostExeLink: 'Solo el .exe (avanzado)',
+    setupSelfContainedNote:
+      'La versión de GitHub es autocontenida: no hace falta instalar .NET aparte.',
+    hostMissingLink: 'Detalles técnicos (desarrolladores)',
     hostErrorDetail: 'Detalle técnico',
     kindFile: 'archivo',
     kindFolder: 'carpeta',
@@ -112,6 +137,199 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+/** Downloads OpenMyFilesApps.Host.exe from GitHub Releases, then registers (extension ID embedded). */
+function buildAutoDownloadSetupScript() {
+  const extId = chrome.runtime.id;
+  const url = HOST_EXE_DOWNLOAD_URL;
+  return `# Open my files & apps - one-step Windows setup (generated for this browser install)
+# Downloads the helper from GitHub and registers native messaging. Run via the .cmd (double-click) or: Right-click this file - Run with PowerShell.
+
+$ErrorActionPreference = "Stop"
+$ExtensionId = "${extId}"
+$HostExeDownloadUrl = "${url}"
+$ManifestDir = Join-Path $env:LOCALAPPDATA "OpenMyFilesApps"
+New-Item -ItemType Directory -Force -Path $ManifestDir | Out-Null
+$HostExe = Join-Path $ManifestDir "OpenMyFilesApps.Host.exe"
+
+Write-Host "Downloading helper..."
+try {
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+} catch { }
+try {
+  Invoke-WebRequest -Uri $HostExeDownloadUrl -OutFile $HostExe -UseBasicParsing
+} catch {
+  Write-Host ""
+  Write-Host "Download failed. Check your connection or firewall."
+  Write-Host "You can also open Releases in the browser:"
+  Write-Host "  https://github.com/mapicallo/open-my-files-apps/releases/latest"
+  Write-Host "Save OpenMyFilesApps.Host.exe next to a manually downloaded register script from this panel."
+  Write-Host ""
+  Read-Host "Press Enter to exit"
+  exit 1
+}
+
+if (-not (Test-Path -LiteralPath $HostExe) -or (Get-Item -LiteralPath $HostExe).Length -lt 1024) {
+  Write-Host "Download looks invalid. Try again or install manually from GitHub Releases."
+  Read-Host "Press Enter to exit"
+  exit 1
+}
+
+try {
+  Unblock-File -LiteralPath $HostExe -ErrorAction SilentlyContinue
+} catch { }
+
+$HostExe = [System.IO.Path]::GetFullPath($HostExe)
+$ManifestPath = Join-Path $ManifestDir "com.mapicallo.open_my_files_apps.json"
+
+$obj = [ordered]@{
+  name = "com.mapicallo.open_my_files_apps"
+  description = "Native host for Open my files & apps"
+  path = $HostExe
+  type = "stdio"
+  allowed_origins = @("chrome-extension://$ExtensionId/")
+}
+$json = $obj | ConvertTo-Json -Compress -Depth 5
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($ManifestPath, $json, $utf8NoBom)
+
+$nmh = "com.mapicallo.open_my_files_apps"
+$parents = @(
+  "HKCU:\\Software\\Google\\Chrome\\NativeMessagingHosts",
+  "HKCU:\\Software\\Google\\Chrome Beta\\NativeMessagingHosts",
+  "HKCU:\\Software\\Google\\Chrome Dev\\NativeMessagingHosts",
+  "HKCU:\\Software\\Google\\Chrome SxS\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge Beta\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge Dev\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge SxS\\NativeMessagingHosts",
+  "HKCU:\\Software\\BraveSoftware\\Brave-Browser\\NativeMessagingHosts"
+)
+
+foreach ($parent in $parents) {
+  $fullKey = Join-Path $parent $nmh
+  New-Item -Path $fullKey -Force | Out-Null
+  Set-ItemProperty -LiteralPath $fullKey -Name "(default)" -Value $ManifestPath -Type String
+}
+
+Write-Host ""
+Write-Host "Done. Registered for $($parents.Count) browser locations."
+Write-Host "Host:     $HostExe"
+Write-Host "Manifest: $ManifestPath"
+Write-Host ""
+Write-Host "Close EVERY browser window, then reopen."
+Read-Host "Press Enter"
+`;
+}
+
+/** Batch header + same PowerShell body: user double-clicks .cmd, no "Run with PowerShell" step. */
+function buildHybridCmdInstall() {
+  const ps = buildAutoDownloadSetupScript();
+  return (
+    `@ECHO OFF\r\n` +
+    `powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Get-Content -LiteralPath '%~f0' | Select-Object -Skip 3 | Out-String | Invoke-Expression"\r\n` +
+    `exit /b\r\n` +
+    ps
+  );
+}
+
+function downloadHybridCmd() {
+  const text = buildHybridCmdInstall();
+  // No UTF-8 BOM: a leading BOM can break the batch parser on some Windows setups.
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = 'OpenMyFilesApps-Install-Windows.cmd';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadAutoSetupScript() {
+  const text = buildAutoDownloadSetupScript();
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = 'OpenMyFilesApps-Install-Windows.ps1';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/** PowerShell one-time registration; extension ID embedded; host .exe must sit next to this .ps1. */
+function buildUserSetupScript() {
+  const extId = chrome.runtime.id;
+  return `# Open my files & apps - Windows helper registration (generated for this browser install)
+# Before running: place OpenMyFilesApps.Host.exe in the SAME folder as this .ps1
+
+$ErrorActionPreference = "Stop"
+$ExtensionId = "${extId}"
+$HostExe = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "OpenMyFilesApps.Host.exe"))
+
+if (-not (Test-Path -LiteralPath $HostExe)) {
+    Write-Host ""
+    Write-Host "OpenMyFilesApps.Host.exe not found next to this script."
+    Write-Host "Download: https://github.com/mapicallo/open-my-files-apps/releases/latest"
+    Write-Host "Save the .exe in the same folder as this .ps1, then run again."
+    Write-Host ""
+    Read-Host "Press Enter to exit"
+    exit 1
+}
+
+$ManifestDir = Join-Path $env:LOCALAPPDATA "OpenMyFilesApps"
+New-Item -ItemType Directory -Force -Path $ManifestDir | Out-Null
+$ManifestPath = Join-Path $ManifestDir "com.mapicallo.open_my_files_apps.json"
+
+$obj = [ordered]@{
+  name = "com.mapicallo.open_my_files_apps"
+  description = "Native host for Open my files & apps"
+  path = $HostExe
+  type = "stdio"
+  allowed_origins = @("chrome-extension://$ExtensionId/")
+}
+$json = $obj | ConvertTo-Json -Compress -Depth 5
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($ManifestPath, $json, $utf8NoBom)
+
+$nmh = "com.mapicallo.open_my_files_apps"
+$parents = @(
+  "HKCU:\\Software\\Google\\Chrome\\NativeMessagingHosts",
+  "HKCU:\\Software\\Google\\Chrome Beta\\NativeMessagingHosts",
+  "HKCU:\\Software\\Google\\Chrome Dev\\NativeMessagingHosts",
+  "HKCU:\\Software\\Google\\Chrome SxS\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge Beta\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge Dev\\NativeMessagingHosts",
+  "HKCU:\\Software\\Microsoft\\Edge SxS\\NativeMessagingHosts",
+  "HKCU:\\Software\\BraveSoftware\\Brave-Browser\\NativeMessagingHosts"
+)
+
+foreach ($parent in $parents) {
+  $fullKey = Join-Path $parent $nmh
+  New-Item -Path $fullKey -Force | Out-Null
+  Set-ItemProperty -LiteralPath $fullKey -Name "(default)" -Value $ManifestPath -Type String
+}
+
+Write-Host ""
+Write-Host "Done. Registered for $($parents.Count) browser locations."
+Write-Host "Manifest: $ManifestPath"
+Write-Host "Host:     $HostExe"
+Write-Host ""
+Write-Host "Close EVERY browser window, then reopen."
+Read-Host "Press Enter"
+`;
+}
+
+function downloadUserSetupScript() {
+  const text = buildUserSetupScript();
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = 'OpenMyFilesApps-Setup-Offline.ps1';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 async function checkHost() {
   const banner = document.getElementById('hostBanner');
   let detail = '';
@@ -133,10 +351,26 @@ async function checkHost() {
       ? `<p class="host-banner-detail"><span class="host-banner-detail-label">${t('hostErrorDetail')}:</span> <code>${escapeHtml(detail)}</code></p>`
       : '';
     banner.innerHTML = `
-      <strong>${t('hostMissingTitle')}</strong>
-      ${t('hostMissingBody')}
-      <div style="margin-top:8px;">
-        <a href="${DOCS_URL}" target="_blank" rel="noopener noreferrer">${t('hostMissingLink')}</a>
+      <strong>${escapeHtml(t('hostMissingTitle'))}</strong>
+      <p class="host-banner-lead">${escapeHtml(t('hostMissingLead'))}</p>
+      <ol class="host-setup-steps">
+        <li>${escapeHtml(t('setupStepEasy1'))}</li>
+        <li>${escapeHtml(t('setupStepEasy2'))}</li>
+        <li>${escapeHtml(t('setupStepEasy3'))}</li>
+      </ol>
+      <div class="host-banner-actions host-banner-actions--stack">
+        <button type="button" class="btn btn-setup-banner" id="btnDownloadSetupCmd">${escapeHtml(t('setupDownloadCmdBtn'))}</button>
+        <button type="button" class="btn btn-setup-banner-secondary btn-setup-banner--ghost" id="btnDownloadSetupPs1">${escapeHtml(
+          t('setupDownloadPs1Btn')
+        )}</button>
+        <button type="button" class="btn btn-setup-banner-secondary btn-setup-banner--ghost" id="btnDownloadSetup">${escapeHtml(
+          t('setupDownloadManualBtn')
+        )}</button>
+        <a class="btn btn-setup-banner-secondary" href="${RELEASES_URL}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('setupHostExeLink'))}</a>
+      </div>
+      <p class="host-banner-runtime">${escapeHtml(t('setupSelfContainedNote'))}</p>
+      <div class="host-banner-dev-link">
+        <a href="${DOCS_URL}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('hostMissingLink'))}</a>
       </div>
       ${detailBlock}
     `;
@@ -384,6 +618,24 @@ document.getElementById('btnAddUrl').addEventListener('click', () => onAddUrl())
 document.getElementById('btnOpenAll').addEventListener('click', () => onOpenAll());
 document.getElementById('btnOpenSelection').addEventListener('click', () => onOpenSelection());
 document.getElementById('languageSelect').addEventListener('change', (e) => onLangChange(e.target.value));
+
+document.getElementById('hostBanner').addEventListener('click', (e) => {
+  const el = e.target;
+  if (el && el.id === 'btnDownloadSetupCmd') {
+    e.preventDefault();
+    downloadHybridCmd();
+    return;
+  }
+  if (el && el.id === 'btnDownloadSetupPs1') {
+    e.preventDefault();
+    downloadAutoSetupScript();
+    return;
+  }
+  if (el && el.id === 'btnDownloadSetup') {
+    e.preventDefault();
+    downloadUserSetupScript();
+  }
+});
 
 (async function init() {
   await loadState();
