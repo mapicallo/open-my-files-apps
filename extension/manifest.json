@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Open my files & apps",
-  "version": "0.1.7",
-  "description": "One panel to open files, folders & URLs on Windows. Optional local helper for pickers & launch; your list stays on-device in the browser.",
+  "version": "0.1.8",
+  "description": "Open files, folders & URLs from one panel. Optional Windows helper for native pickers; list stays local.",
   "homepage_url": "https://github.com/mapicallo/open-my-files-apps",
   "minimum_chrome_version": "109",
   "permissions": ["storage", "nativeMessaging", "windows"],
