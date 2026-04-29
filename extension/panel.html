@@ -47,10 +47,26 @@
     </main>
 
     <footer class="footer">
-      <p class="footer-note" data-i18n="footerNote">Drag the top bar to move. Resize this window like any app. Data stays on this device.</p>
+      <p class="footer-note" data-i18n="footerNote">Data stays on this device.</p>
       <div class="footer-meta">
-        <a class="footer-brand" href="https://ai4context.com" target="_blank" rel="noopener noreferrer" data-i18n="brand">AI4Context</a>
-        <span class="footer-sep">·</span>
+        <a
+          class="footer-brand"
+          id="brandLink"
+          href="https://ai4context.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n="brand"
+        >AI4Context</a>
+        <span class="footer-sep" aria-hidden="true">|</span>
+        <a
+          class="footer-support"
+          id="supportLink"
+          href="https://ai4context.com/mission-support"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n="support"
+        >Support</a>
+        <span class="footer-sep" aria-hidden="true">·</span>
         <span id="versionLabel" class="footer-version"></span>
       </div>
     </footer>

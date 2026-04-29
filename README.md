@@ -11,7 +11,11 @@ If you only want to **use** the extension on Windows:
 
 1. Install the extension and open its panel.
 2. On the **yellow banner**, use **Download installer (double-click)**: save `OpenMyFilesApps-Install-Windows.cmd`, run it once (SmartScreen: *More info* → *Run anyway*). It downloads a **self-contained** `OpenMyFilesApps.Host.exe`, registers it, and embeds your extension ID. Then **fully quit and reopen** the browser.
-3. **Maintainers:** publishing a GitHub Release runs [`.github/workflows/release-host.yml`](.github/workflows/release-host.yml), which builds and attaches **`OpenMyFilesApps.Host.exe`** (self-contained single-file) for the panel’s download URL.
+3. **Maintainers — host binary on GitHub (needed for the panel downloader):** there must be a **Release** whose assets include **`OpenMyFilesApps.Host.exe`** (exact name). After [GitHub CLI](https://cli.github.com/) login (`gh auth login`), from the repo run:
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\publish-host-release.ps1
+   ```
+   That publishes a self-contained **win-x64** host and creates `releases/latest/download/OpenMyFilesApps.Host.exe`. The workflow [`.github/workflows/release-host.yml`](.github/workflows/release-host.yml) can attach the same file automatically **when** you create a release from the GitHub UI (it does not run if there are zero releases).
 
 Offline or advanced: see [docs/USER-SETUP.md](docs/USER-SETUP.md).
 
@@ -23,6 +27,7 @@ Offline or advanced: see [docs/USER-SETUP.md](docs/USER-SETUP.md).
 | `native-host/OpenMyFilesApps.Host/` | .NET 8 WinForms app: `ping`, file/folder pickers, `launch` |
 | `scripts/dev-register-host.ps1` | Dev registration for Chromium browsers (current user) |
 | `scripts/build-host.cmd` | Compila el `.exe` del host antes de registrar (usa **cmd** o doble clic) |
+| `scripts/publish-host-release.ps1` | Maintainer: publica `OpenMyFilesApps.Host.exe` en un GitHub Release (`gh release create`) |
 
 ## Quick start (developers)
 

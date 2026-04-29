@@ -432,14 +432,27 @@ button.btn-setup-banner-secondary {
   color: #6b7280;
 }
 
-.footer-brand {
+.footer-brand,
+.footer-support {
   color: #4f46e5;
   font-weight: 600;
   text-decoration: none;
 }
 
-.footer-brand:hover {
+.footer-support {
+  color: #d97706;
+}
+
+.footer-brand:hover,
+.footer-support:hover {
   text-decoration: underline;
+}
+
+.footer-brand:focus-visible,
+.footer-support:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .footer-sep {

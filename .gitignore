@@ -8,6 +8,9 @@ extension.crx
 *.pem
 local-*.json
 
+# Published native host (local build; do not commit ~150MB binary)
+out/
+
 # Generated Chrome Web Store screenshots (sources live in pantallazos/)
 pantallazos/chrome-web-store/
 pantallazos/edge-store/

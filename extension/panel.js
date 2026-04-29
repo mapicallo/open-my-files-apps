@@ -21,8 +21,11 @@ const TRANSLATIONS = {
     nothingSelected: 'Check at least one item to use Open selection.',
     emptyHint:
       'Add files, folders, or URLs. Check rows to include them in Open selection; Open all runs every row. Windows helper required for file and folder picks.',
-    footerNote: 'Drag the top bar to move. Resize this window like any app. Data stays on this device.',
+    footerNote: 'Data stays on this device.',
     brand: 'AI4Context',
+    brandAria: 'AI4Context — open website',
+    support: 'Support',
+    supportAria: 'Support AI4Context',
     hostMissingTitle: 'Windows helper not detected',
     hostMissingLead:
       'Connect the small Windows program once. No extension ID to copy — the installer already matches this browser.',
@@ -64,8 +67,11 @@ const TRANSLATIONS = {
     nothingSelected: 'Marca al menos un elemento para usar Abrir selección.',
     emptyHint:
       'Añade archivos, carpetas o URLs. Marca filas para incluirlas en Abrir selección; Abrir todo ejecuta todas las filas. El asistente de Windows es necesario para archivos y carpetas.',
-    footerNote: 'Arrastra la barra superior para mover. Redimensiona como cualquier ventana. Los datos quedan en este dispositivo.',
+    footerNote: 'Los datos quedan en este dispositivo.',
     brand: 'AI4Context',
+    brandAria: 'AI4Context — abrir sitio web',
+    support: 'Apoyar',
+    supportAria: 'Apoyar AI4Context',
     hostMissingTitle: 'No se detecta el asistente de Windows',
     hostMissingLead:
       'Conecta el programa de Windows una vez. No hace falta copiar el ID: el instalador ya corresponde a este navegador.',
@@ -109,6 +115,8 @@ function applyI18n() {
     const key = el.getAttribute('data-i18n');
     if (key && TRANSLATIONS[currentLang][key]) el.textContent = TRANSLATIONS[currentLang][key];
   });
+  document.getElementById('brandLink')?.setAttribute('aria-label', t('brandAria'));
+  document.getElementById('supportLink')?.setAttribute('aria-label', t('supportAria'));
   document.documentElement.lang = currentLang === 'es' ? 'es' : 'en';
 }
 

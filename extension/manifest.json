@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Open my files & apps",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Open files, folders & URLs from one panel. Optional Windows helper for native pickers; list stays local.",
   "homepage_url": "https://github.com/mapicallo/open-my-files-apps",
   "minimum_chrome_version": "109",
